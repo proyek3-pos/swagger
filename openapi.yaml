@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: Laundry POS API
+  description: API untuk mengelola aplikasi POS laundry termasuk fitur otentikasi, pelanggan, dan pembayaran.
+  version: 1.0.0
+servers:
+  - url: https://laundry-pos-ten.vercel.app
+  - url: http://localhost:8082
+paths:
+  /register:
+    post:
+      tags:
+        - auth
+      summary: Register a new user
+      description: Endpoint untuk mendaftarkan pengguna baru.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "nana"
+                password:
+                  type: string
+                  example: "123"
+                role:
+                  type: string
+                  example: "admin"
+      responses:
+        "200":
+          description: User registered successfully
+        "400":
+          description: Invalid request
+  /login:
+    post:
+      tags:
+        - auth
+      summary: User login
+      description: Endpoint untuk login pengguna.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "ayala"
+                password:
+                  type: string
+                  example: "123"
+      responses:
+        "200":
+          description: Login successful
+        "401":
+          description: Invalid credentials
+  /customers:
+    get:
+      tags:
+        - customer
+      summary: Get all customers
+      description: Mendapatkan daftar semua pelanggan.
+      responses:
+        "200":
+          description: List of customers
+    post:
+      tags:
+        - customer
+      summary: Add a new customer
+      description: Menambahkan pelanggan baru.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  example: "Ukasyah"
+                lastName:
+                  type: string
+                  example: "Abdulloh"
+                phoneNumber:
+                  type: string
+                  example: "08954627819173"
+      responses:
+        "201":
+          description: Customer added successfully
+  /customer-id:
+    get:
+      tags:
+        - customer
+      summary: Get customer by ID
+      description: Mendapatkan data pelanggan berdasarkan ID.
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID pelanggan
+      responses:
+        "200":
+          description: Customer data
+        "404":
+          description: Customer not found
+    put:
+      tags:
+        - customer
+      summary: Update customer data
+      description: Mengubah data pelanggan berdasarkan ID.
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID pelanggan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  example: "Ukasyah"
+                lastName:
+                  type: string
+                  example: "Azzam"
+                phoneNumber:
+                  type: string
+                  example: "08954627819173"
+      responses:
+        "200":
+          description: Customer updated successfully
+    delete:
+      tags:
+        - customer
+      summary: Delete a customer
+      description: Menghapus data pelanggan berdasarkan ID.
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID pelanggan
+      responses:
+        "200":
+          description: Customer deleted successfully
+  /create-payment:
+    post:
+      tags:
+        - payment
+      summary: Create a payment
+      description: Membuat pembayaran untuk sebuah order.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order_id:
+                  type: string
+                  example: "order-id-1234"
+                gross_amount:
+                  type: number
+                  example: 10000
+                customer:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "John Doe"
+                    email:
+                      type: string
+                      example: "johndoe@example.com"
+                    phone:
+                      type: string
+                      example: "081234567890"
+      responses:
+        "200":
+          description: Payment created successfully
+components: {}
