@@ -5,6 +5,7 @@ info:
   version: 1.0.0
 servers:
   - url: https://laundry-pos-ten.vercel.app
+  - url: http://localhost:8082
 paths:
   /register:
     post:
@@ -167,25 +168,33 @@ paths:
             schema:
               type: object
               properties:
-                order_id:
-                  type: string
-                  example: "order-id-1234"
                 gross_amount:
                   type: number
-                  example: 10000
+                  description: Total pembayaran dalam satuan mata uang
+                  example: 50000
                 customer:
                   type: object
                   properties:
                     name:
                       type: string
-                      example: "John Doe"
+                      description: Nama pelanggan
+                      example: "ayaka"
                     email:
                       type: string
-                      example: "johndoe@example.com"
+                      description: Email pelanggan
+                      example: "wisnu@gmail.com"
                     phone:
                       type: string
-                      example: "081234567890"
+                      description: Nomor telepon pelanggan
+                      example: "0895331942686"
       responses:
         "200":
           description: Payment created successfully
-components: {}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
