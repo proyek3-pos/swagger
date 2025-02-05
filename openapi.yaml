@@ -1,18 +1,14 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
   title: Laundry POS API
-  description: API untuk mengelola aplikasi POS laundry termasuk fitur otentikasi, pelanggan, dan pembayaran.
+  description: API untuk layanan POS Laundry
   version: 1.0.0
 servers:
   - url: https://laundry-pos-ten.vercel.app
-  - url: http://localhost:8082
 paths:
   /register:
     post:
-      tags:
-        - auth
-      summary: Register a new user
-      description: Endpoint untuk mendaftarkan pengguna baru.
+      summary: Registrasi pengguna baru
       requestBody:
         required: true
         content:
@@ -22,24 +18,17 @@ paths:
               properties:
                 username:
                   type: string
-                  example: "nana"
                 password:
                   type: string
-                  example: "123"
                 role:
                   type: string
-                  example: "admin"
       responses:
-        "200":
-          description: User registered successfully
-        "400":
-          description: Invalid request
+        "201":
+          description: Pengguna berhasil didaftarkan
+
   /login:
     post:
-      tags:
-        - auth
-      summary: User login
-      description: Endpoint untuk login pengguna.
+      summary: Login pengguna
       requestBody:
         required: true
         content:
@@ -49,29 +38,17 @@ paths:
               properties:
                 username:
                   type: string
-                  example: "ayala"
                 password:
                   type: string
-                  example: "123"
       responses:
         "200":
-          description: Login successful
-        "401":
-          description: Invalid credentials
+          description: Login berhasil
+
   /customers:
-    get:
-      tags:
-        - customer
-      summary: Get all customers
-      description: Mendapatkan daftar semua pelanggan.
-      responses:
-        "200":
-          description: List of customers
     post:
-      tags:
-        - customer
-      summary: Add a new customer
-      description: Menambahkan pelanggan baru.
+      summary: Tambah pelanggan
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -79,48 +56,47 @@ paths:
             schema:
               type: object
               properties:
-                firstName:
+                fullName:
                   type: string
-                  example: "Ukasyah"
-                lastName:
+                email:
                   type: string
-                  example: "Abdulloh"
                 phoneNumber:
                   type: string
-                  example: "08954627819173"
       responses:
         "201":
-          description: Customer added successfully
+          description: Pelanggan berhasil ditambahkan
+    get:
+      summary: Dapatkan semua pelanggan
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Daftar pelanggan
+
   /customer-id:
     get:
-      tags:
-        - customer
-      summary: Get customer by ID
-      description: Mendapatkan data pelanggan berdasarkan ID.
+      summary: Dapatkan pelanggan berdasarkan ID
+      security:
+        - bearerAuth: []
       parameters:
-        - in: query
-          name: id
+        - name: id
+          in: query
           required: true
           schema:
             type: string
-          description: ID pelanggan
       responses:
         "200":
-          description: Customer data
-        "404":
-          description: Customer not found
+          description: Detail pelanggan
     put:
-      tags:
-        - customer
-      summary: Update customer data
-      description: Mengubah data pelanggan berdasarkan ID.
+      summary: Perbarui pelanggan
+      security:
+        - bearerAuth: []
       parameters:
-        - in: query
-          name: id
+        - name: id
+          in: query
           required: true
           schema:
             type: string
-          description: ID pelanggan
       requestBody:
         required: true
         content:
@@ -128,39 +104,41 @@ paths:
             schema:
               type: object
               properties:
-                firstName:
+                fullName:
                   type: string
-                  example: "Ukasyah"
-                lastName:
+                email:
                   type: string
-                  example: "Azzam"
                 phoneNumber:
                   type: string
-                  example: "08954627819173"
       responses:
         "200":
-          description: Customer updated successfully
+          description: Pelanggan berhasil diperbarui
     delete:
-      tags:
-        - customer
-      summary: Delete a customer
-      description: Menghapus data pelanggan berdasarkan ID.
+      summary: Hapus pelanggan
+      security:
+        - bearerAuth: []
       parameters:
-        - in: query
-          name: id
+        - name: id
+          in: query
           required: true
           schema:
             type: string
-          description: ID pelanggan
       responses:
         "200":
-          description: Customer deleted successfully
-  /create-payment:
+          description: Pelanggan berhasil dihapus
+
+  /services:
+    get:
+      summary: Dapatkan semua layanan
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Daftar layanan
     post:
-      tags:
-        - payment
-      summary: Create a payment
-      description: Membuat pembayaran untuk sebuah order.
+      summary: Tambah layanan
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -168,33 +146,216 @@ paths:
             schema:
               type: object
               properties:
-                gross_amount:
-                  type: number
-                  description: Total pembayaran dalam satuan mata uang
-                  example: 50000
-                customer:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      description: Nama pelanggan
-                      example: "ayaka"
-                    email:
-                      type: string
-                      description: Email pelanggan
-                      example: "wisnu@gmail.com"
-                    phone:
-                      type: string
-                      description: Nomor telepon pelanggan
-                      example: "0895331942686"
+                serviceName:
+                  type: string
+                description:
+                  type: string
+                unitPrice:
+                  type: integer
+                unit:
+                  type: string
+      responses:
+        "201":
+          description: Layanan berhasil ditambahkan
+
+  /service-id:
+    get:
+      summary: Dapatkan layanan berdasarkan ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         "200":
-          description: Payment created successfully
+          description: Detail layanan
+    put:
+      summary: Perbarui layanan
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                serviceName:
+                  type: string
+                description:
+                  type: string
+                unitPrice:
+                  type: integer
+                unit:
+                  type: string
+      responses:
+        "200":
+          description: Layanan berhasil diperbarui
+    delete:
+      summary: Hapus layanan
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Layanan berhasil dihapus
+
+  /create-payment:
+    post:
+      summary: Buat pembayaran
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionId:
+                  type: string
+      responses:
+        "201":
+          description: Pembayaran berhasil dibuat
+
+  /payments:
+    get:
+      summary: Dapatkan semua pembayaran
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Daftar pembayaran
+
+  /payment-detail:
+    get:
+      summary: Dapatkan pembayaran berdasarkan ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: order_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Detail pembayaran
+
+  /transactions:
+    get:
+      summary: Dapatkan semua transaksi
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Daftar transaksi
+    post:
+      summary: Tambah transaksi
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      serviceId:
+                        type: string
+                      quantity:
+                        type: integer
+                paymentMethod:
+                  type: string
+      responses:
+        "201":
+          description: Transaksi berhasil ditambahkan
+
+  /transaction-id:
+    get:
+      summary: Dapatkan transaksi berdasarkan ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Detail transaksi
+    put:
+      summary: Perbarui transaksi
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      serviceId:
+                        type: string
+                      quantity:
+                        type: integer
+                paymentMethod:
+                  type: string
+      responses:
+        "200":
+          description: Transaksi berhasil diperbarui
+    delete:
+      summary: Hapus transaksi
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transaksi berhasil dihapus
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-security:
-  - bearerAuth: []
